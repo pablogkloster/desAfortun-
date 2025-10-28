@@ -65,10 +65,9 @@ canvas {
 /* Panel del ganador */
 .panel-ganador {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  margin-top: 1.25rem;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .ganador-texto {
@@ -91,6 +90,12 @@ canvas {
 }
 
 /* === Botones Arcade Unificados === */
+.botones-superiores {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
 .boton-arcade {
   flex-shrink: 0;              /* evita que se achique en flexbox */
   aspect-ratio: 1 / 1;         /* mantiene forma circular siempre */
@@ -152,6 +157,8 @@ canvas {
 .negro {
   background: radial-gradient(circle at 30% 30%, #000, #111);
   color: white;
+  margin-top: 50%;
+  
 }
 .negro.encendido {
   background: radial-gradient(circle at 30% 30%, #222, #000);
@@ -190,20 +197,22 @@ canvas {
 .input-wrapper {
   display: flex;
   justify-content: center;
-  width: 100%;
+  width: 80%;
   max-width: 20rem; /* 🔹 antes 31.25rem → más angosto */
+  margin-top: 0.5rem;
   gap: 1rem;
 }
 
 /* Input neón blanco con cursor titilante */
 .input-name {
-  flex: 1;
-  padding: 0.5rem 0.875rem; /* 🔹 menos espacio interno */
+  width: 100%;
+  padding: 0.75rem 1rem;
   border: 2px solid #fff;
-  border-radius: 1.5625rem;
+  border-radius: 1.5rem;
   background-color: #000;
   color: #fff;
-  font-size: 1.125rem; /* 🔹 un poco más chico */
+  font-size: 1.2rem;
+  text-align: center;
   text-shadow: 0 0 6px white;
   outline: none;
   animation: parpadeoCursor 1s step-end infinite alternate;

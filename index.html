@@ -3,13 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ruleta Casino - Amigo Secreto</title>
+  <title>des-afortunadx</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Krona+One&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="estilos.css" />
 
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
@@ -17,34 +15,36 @@
 
 <body>
   <main class="main-content">
-    <header class="casino-header">
-      <div class="ruleta-sombra">
-        <div class="indicador"></div>
-        <canvas id="ruleta" width="400" height="400"></canvas>
-      </div>
+  <header class="casino-header">
+    <div class="ruleta-sombra">
+      <div class="indicador"></div>
+      <canvas id="ruleta" width="400" height="400"></canvas>
+    </div>
 
-      <div class="panel-ganador">
+    <div class="panel-ganador">
+      <div class="botones-superiores">
         <button id="btnSortear" class="boton-arcade rojo" title="Iniciar juego"></button>
-        <div id="ganador" class="ganador-texto"></div>
-      </div>
-    </header>
-
-    <section class="input-section">
-      <div class="input-wrapper">
-        <input type="text" id="amigo" class="input-name" autofocus/>
         <button id="btnAgregar" class="boton-arcade verde" title="Agregar participante"></button>
       </div>
 
-      <div class="listas-container">
-        <ul id="listaAmigos" class="name-list"></ul>
-        <ul id="resultado" class="result-list"></ul>
+      <!-- 🔽 Input centrado debajo de los botones -->
+      <div class="input-wrapper">
+        <input type="text" id="amigo" class="input-name" autofocus />
       </div>
-    </section>
 
-    <footer>
-      <button id="btnReiniciar" class="boton-arcade negro" title="Reiniciar juego"></button>
-    </footer>
-  </main>
+      <div id="ganador" class="ganador-texto"></div>
+    </div>
+  </header>
+
+  <section class="listas-container">
+    <ul id="resultado" class="result-list"></ul>
+    <ul id="listaAmigos" class="name-list"></ul>
+  </section>
+
+  <footer>
+    <button id="btnReiniciar" class="boton-arcade negro" title="Reiniciar juego"></button>
+  </footer>
+</main>
 
   <script src="app.js" defer></script>
 </body>

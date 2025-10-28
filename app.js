@@ -13,10 +13,10 @@ const canvas = document.getElementById("ruleta");
 const ctx = canvas.getContext("2d");
 
 // 🎵 Sonidos
-const sonidoRuleta = new Audio("assets/ruleta_spin.wav");
-const sonidoChips = new Audio("assets/chip_sound.mp3");
-const sonidoGanador = new Audio("assets/win_sound.mp3");
-const sonidoReinicio = new Audio("assets/pacman-dies.mp3");
+const sonidoRuleta = new Audio("sounds/ruleta_spin.wav");
+const sonidoChips = new Audio("sounds/chip_sound.mp3");
+const sonidoGanador = new Audio("sounds/008621572_prev.mp3");
+const sonidoReinicio = new Audio("sounds/ringtones-joker-risa.mp3");
 sonidoReinicio.volume = 0.3;
 
 // Enter agrega participante
@@ -153,7 +153,23 @@ function sortearAmigo() {
       sonidoRuleta.pause();
       sonidoRuleta.currentTime = 0;
       const ganador = calcularGanador(anguloInicial);
-      ganadorTexto.textContent = `🥳 ${ganador}!`;
+      //ganadorTexto.textContent = `🥳 ${ganador}!`;
+      input.value = `🥳 ${ganador}!`;
+
+    // Efecto visual tipo neón
+      input.style.animation = "ganadorFlash 1s ease-in-out 3";
+      input.style.color = "#00ff88";
+      input.style.textShadow = "0 0 10px #00ff88";
+
+      // Después de unos segundos, limpiar el input y devolver foco
+      setTimeout(() => {
+        input.value = "";
+        input.style.animation = "";
+        input.style.color = "#fff";
+        input.style.textShadow = "0 0 6px white";
+        input.focus();
+      }, 3000);
+
       sonidoGanador.currentTime = 0;
       sonidoGanador.play();
       ganadores.push(ganador);
@@ -192,3 +208,13 @@ function mezclarAmigos() {
     [amigos[i], amigos[j]] = [amigos[j], amigos[i]];
   }
 }
+
+// Animación en CSS
+const style = document.createElement("style");
+style.textContent = `
+@keyframes ganadorFlash {
+  0%, 100% { box-shadow: 0 0 10px #00ff88; }
+  50% { box-shadow: 0 0 30px #00ff88; }
+}`;
+document.head.appendChild(style);
+
