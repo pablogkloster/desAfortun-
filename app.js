@@ -43,17 +43,6 @@ btnReiniciar.addEventListener("click", () => {
   btnSortear.classList.remove("encendido");
 });
 
-/*// Botón reiniciar
-btnReiniciar.addEventListener("click", () => {
-  amigos = [];
-  ganadores = [];
-  ganadorTexto.textContent = "";
-  mostrarAmigos();
-  dibujarRuleta();
-  resultado.innerHTML = "";
-  btnSortear.classList.remove("encendido");
-});*/
-
 // Agregar amigo
 function agregarAmigo() {
   const nombre = input.value.trim();
@@ -139,6 +128,8 @@ function sortearAmigo() {
     return;
   }
 
+  mezclarAmigos();
+
   btnSortear.classList.remove("encendido");
   btnSortear.disabled = true;
   btnAgregar.classList.remove("encendido");
@@ -162,7 +153,7 @@ function sortearAmigo() {
       sonidoRuleta.pause();
       sonidoRuleta.currentTime = 0;
       const ganador = calcularGanador(anguloInicial);
-      ganadorTexto.textContent = `🎉 ${ganador}!`;
+      ganadorTexto.textContent = `🥳 ${ganador}!`;
       sonidoGanador.currentTime = 0;
       sonidoGanador.play();
       ganadores.push(ganador);
@@ -193,3 +184,11 @@ function calcularGanador(anguloFinal) {
 // Inicial
 dibujarRuleta();
 btnAgregar.classList.add("encendido");
+
+// Mezcla aleatoriamente el orden del array (algoritmo de Fisher-Yates)
+function mezclarAmigos() {
+  for (let i = amigos.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [amigos[i], amigos[j]] = [amigos[j], amigos[i]];
+  }
+}
