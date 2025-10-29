@@ -50,7 +50,7 @@ canvas {
 /* Indicador (flecha casino) */
 .indicador {
   position: absolute;
-  top: 0px;
+  top: 8px;
   left: 50%;
   transform: translateX(-50%) rotate(0deg);
   width: 0;

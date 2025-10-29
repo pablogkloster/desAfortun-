@@ -1,3 +1,4 @@
+// app.js (versión corregida y final)
 let amigos = [];
 let ganadores = [];
 let anguloInicial = 0;
@@ -19,39 +20,81 @@ const sonidoGanador = new Audio("sounds/008621572_prev.mp3");
 const sonidoReinicio = new Audio("sounds/ringtones-joker-risa.mp3");
 sonidoReinicio.volume = 0.3;
 
+const logoImg = new Image();
+logoImg.src = "assets/logo.png";
+
+// Esperar a que cargue el logo antes del primer dibujo
+logoImg.addEventListener("load", () => {
+  dibujarRuleta();
+});
+
+
+/* ------------------------
+   LISTENERS INICIALES
+   ------------------------ */
+
 // Enter agrega participante
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter") agregarAmigo();
 });
 
-// Evento click en botón verde
-btnAgregar.addEventListener("click", agregarAmigo);
+// Cuando el usuario hace clic en el input, activa visualmente el botón verde
+input.addEventListener("focus", () => {
+  btnAgregar.classList.add("encendido");
+});
+// Si pierde foco, quitar solo la apariencia (no la funcionalidad)
+input.addEventListener("blur", () => {
+  btnAgregar.classList.remove("encendido");
+});
+// También activamos la apariencia del botón verde según contenido
+input.addEventListener("input", () => {
+  if (input.value.trim() !== "") {
+    btnAgregar.classList.add("encendido");
+  } else {
+    btnAgregar.classList.remove("encendido");
+  }
+});
 
+// Clicks
+btnAgregar.addEventListener("click", agregarAmigo);
 btnSortear.addEventListener("click", sortearAmigo);
 
-// Botón reiniciar
+/* ------------------------
+   BOTÓN REINICIAR
+   ------------------------ */
 btnReiniciar.addEventListener("click", () => {
-  sonidoReinicio.currentTime = 0; // 🔹 Reinicia el sonido
-  sonidoReinicio.play();          // 🔊 Reproduce el sonido de reinicio
+  sonidoReinicio.currentTime = 0;
+  sonidoReinicio.play();
 
   amigos = [];
   ganadores = [];
   ganadorTexto.textContent = "";
+  resultado.innerHTML = "";
   mostrarAmigos();
   dibujarRuleta();
-  resultado.innerHTML = ""; // 🔹 Limpia la lista visual de ganadores
+
+  // Estado de botones tras reinicio
   btnSortear.classList.remove("encendido");
+  btnSortear.disabled = true;   // necesita >=2 para activarse
+  btnAgregar.classList.add("encendido");
+
+  input.value = "";
+  input.focus();
 });
 
-// Agregar amigo
+/* ------------------------
+   AGREGAR PARTICIPANTE
+   ------------------------ */
 function agregarAmigo() {
   const nombre = input.value.trim();
   if (!nombre) {
     alert("Ingrese un nombre");
+    input.focus();
     return;
   }
   if (amigos.includes(nombre)) {
     alert("Ya está en la lista");
+    input.focus();
     return;
   }
 
@@ -62,74 +105,104 @@ function agregarAmigo() {
   mostrarAmigos();
   dibujarRuleta();
 
-  btnSortear.classList.remove("encendido");
-  btnAgregar.classList.remove("encendido");
-  setTimeout(() => {
-    if (amigos.length >= 2) btnSortear.classList.add("encendido");
-    btnAgregar.classList.add("encendido");
-  }, 300);
+  // Visual: activar rojo si ya hay 2 o más
+  if (amigos.length >= 2) {
+    btnSortear.classList.add("encendido");
+    btnSortear.disabled = false;
+  }
+
+  // Mantener el botón verde encendido breve
+  btnAgregar.classList.add("encendido");
+  setTimeout(() => btnAgregar.classList.remove("encendido"), 300);
 
   input.value = "";
   input.focus();
 }
 
+/* ------------------------
+   MOSTRAR LISTAS
+   ------------------------ */
 function mostrarAmigos() {
+  // si querés orden visual distinto podés ajustarlo aquí
   lista.innerHTML = amigos.map(a => `<li>${a}</li>`).join("");
 }
 function mostrarResultados() {
   resultado.innerHTML = ganadores.map((g,i) => `<li>${i+1}. ${g}</li>`).join("");
 }
 
-// Dibujo base de ruleta
+/* ------------------------
+   DIBUJO DE LA RULETA
+   ------------------------ */
 function dibujarRuleta() {
   const total = amigos.length;
   const radio = canvas.width / 2;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  if (total === 0) {
-    ctx.beginPath();
-    ctx.arc(radio, radio, radio - 10, 0, 2 * Math.PI);
-    ctx.fillStyle = "#222";
-    ctx.fill();
-    return;
+  // === DIBUJO DE LA RULETA ===
+  if (total > 0) {
+    const anguloPor = (2 * Math.PI) / total;
+    for (let i = 0; i < total; i++) {
+      const inicio = anguloInicial + i * anguloPor;
+      ctx.beginPath();
+      ctx.moveTo(radio, radio);
+      ctx.arc(radio, radio, radio - 10, inicio, inicio + anguloPor);
+      ctx.fillStyle = `hsl(${(i * 360) / total}, 80%, 55%)`;
+      ctx.fill();
+
+      // Texto en cada sector
+      ctx.save();
+      ctx.translate(radio, radio);
+      ctx.rotate(inicio + anguloPor / 2 + Math.PI / 2);
+      ctx.textAlign = "center";
+      ctx.fillStyle = "white";
+      ctx.textBaseline = "middle";
+      ctx.font = "bold 20px Inter";
+      ctx.fillText(amigos[i], 0, -(radio - 40));
+      ctx.restore();
+    }
   }
 
-  const anguloPor = (2 * Math.PI) / total;
-  for (let i = 0; i < total; i++) {
-    const inicio = anguloInicial + i * anguloPor;
-    ctx.beginPath();
-    ctx.moveTo(radio, radio);
-    ctx.arc(radio, radio, radio - 10, inicio, inicio + anguloPor);
-    ctx.fillStyle = `hsl(${(i * 360) / total}, 80%, 55%)`;
-    ctx.fill();
+  // === CÍRCULO NEGRO CENTRAL (más grande que el logo) ===
+  const logoSize = Math.min(canvas.width, canvas.height) * 0.35;
+  const radioCirculo = (logoSize / 2) * 1.1; // 20% más grande que el logo
+
+  ctx.beginPath();
+  ctx.arc(radio, radio, radioCirculo, 0, 2 * Math.PI);
+  ctx.fillStyle = "#1f1f1fff";
+  ctx.fill();
+  ctx.closePath();
+
+  // === LOGO CON EFECTO NEÓN PARPADEANTE ===
+  if (logoImg.complete) {
+    const x = canvas.width / 2 - logoSize / 2;
+    const y = canvas.height / 2 - logoSize / 2;
+    const brillo = 0.6 + 0.4 * Math.sin(Date.now() / 800); // pulso suave
+
     ctx.save();
-    ctx.translate(radio, radio);
-    ctx.rotate(inicio + anguloPor / 2 + Math.PI / 2);
-    ctx.textAlign = "center";
-    ctx.fillStyle = "white";
-    ctx.textBaseline = "middle"
-    ctx.font = "bold 20px Inter";
-    ctx.fillText(amigos[i], 0, -(radio - 40))
+    ctx.globalAlpha = brillo;
+    ctx.shadowColor = "#ffffff";
+    ctx.shadowBlur = 25 * brillo;
+    ctx.drawImage(logoImg, x, y, logoSize, logoSize);
     ctx.restore();
   }
 
-  // Centro
-  ctx.beginPath();
-  ctx.arc(radio, radio, 40, 0, 2 * Math.PI);
-  ctx.fillStyle = "#222";
-  ctx.fill();
-
-  
+  // 🔁 Mantener el efecto parpadeante del logo
+  requestAnimationFrame(dibujarRuleta);
 }
 
+/* ------------------------
+   SORTEO (bloque principal)
+   ------------------------ */
 function sortearAmigo() {
   if (amigos.length < 2) {
     alert("Se necesitan al menos 2 participantes");
+    input.focus();
     return;
   }
 
   mezclarAmigos();
 
+  // Bloqueo UI inmediato
   btnSortear.classList.remove("encendido");
   btnSortear.disabled = true;
   btnAgregar.classList.remove("encendido");
@@ -149,44 +222,68 @@ function sortearAmigo() {
 
     if (progreso < 1) {
       requestAnimationFrame(animar);
-    } else {
-      sonidoRuleta.pause();
-      sonidoRuleta.currentTime = 0;
-      const ganador = calcularGanador(anguloInicial);
-      //ganadorTexto.textContent = `🥳 ${ganador}!`;
-      input.value = `🥳 ${ganador}!`;
-
-    // Efecto visual tipo neón
-      input.style.animation = "ganadorFlash 1s ease-in-out 3";
-      input.style.color = "#00ff88";
-      input.style.textShadow = "0 0 10px #00ff88";
-
-      // Después de unos segundos, limpiar el input y devolver foco
-      setTimeout(() => {
-        input.value = "";
-        input.style.animation = "";
-        input.style.color = "#fff";
-        input.style.textShadow = "0 0 6px white";
-        input.focus();
-      }, 3000);
-
-      sonidoGanador.currentTime = 0;
-      sonidoGanador.play();
-      ganadores.push(ganador);
-      mostrarResultados();
-      amigos = amigos.filter(a => a !== ganador);
-      mostrarAmigos();
-      setTimeout(() => {
-        dibujarRuleta();
-        if (amigos.length >= 2) btnSortear.classList.add("encendido");
-        btnSortear.disabled = false;
-        btnAgregar.classList.add("encendido");
-      }, 1000);
+      return;
     }
+
+    // Fin de animación
+    sonidoRuleta.pause();
+    sonidoRuleta.currentTime = 0;
+
+    const ganador = calcularGanador(anguloInicial);
+
+    // Mostrar ganador en input con efecto
+    input.value = `🥳 ${ganador}!`;
+    input.style.animation = "ganadorFlash 1s ease-in-out 3";
+    input.style.color = "#e5f73dff";
+    input.style.textShadow = "0 0 10px #e5f73dff";
+
+    sonidoGanador.currentTime = 0;
+    sonidoGanador.play();
+
+    // Guardar y eliminar ganador
+    ganadores.push(ganador);
+    mostrarResultados();
+    amigos = amigos.filter(a => a !== ganador);
+    mostrarAmigos();
+
+    // 🔹 Aquí la corrección: redibujar ruleta incluso si queda un solo participante
+    dibujarRuleta();
+
+    // Tras mostrar el ganador, decidir flujo
+    setTimeout(() => {
+      // limpiar input/estilo
+      input.value = "";
+      input.style.animation = "";
+      input.style.color = "#fff";
+      input.style.textShadow = "0 0 6px white";
+
+      if (amigos.length <= 1) {
+        // Si queda 0 o 1 participante: desactivar sorteo y enfocar reinicio
+        btnSortear.classList.remove("encendido");
+        btnSortear.disabled = true;
+        setTimeout(() => btnReiniciar.focus(), 300);
+      } else {
+        // Si hay 2+ → reactivar sorteo y devolver foco al botón rojo
+        setTimeout(() => {
+          dibujarRuleta();
+          btnSortear.classList.add("encendido");
+          btnSortear.disabled = false;
+          btnSortear.focus();
+        }, 300);
+      }
+
+      // Siempre dejar el input listo por si el usuario quiere agregar
+      input.focus();
+    }, 3000);
   }
+
   requestAnimationFrame(animar);
 }
 
+
+/* ------------------------
+   CÁLCULO GANADOR
+   ------------------------ */
 function calcularGanador(anguloFinal) {
   const total = amigos.length;
   const angPor = (2 * Math.PI) / total;
@@ -197,11 +294,17 @@ function calcularGanador(anguloFinal) {
   return amigos[idx];
 }
 
-// Inicial
+/* ------------------------
+   INICIALIZACIÓN
+   ------------------------ */
 dibujarRuleta();
 btnAgregar.classList.add("encendido");
+// asegurar estado inicial del botón rojo
+if (amigos.length < 2) btnSortear.disabled = true;
 
-// Mezcla aleatoriamente el orden del array (algoritmo de Fisher-Yates)
+/* ------------------------
+   UTIL: MEZCLAR (Fisher-Yates)
+   ------------------------ */
 function mezclarAmigos() {
   for (let i = amigos.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -209,12 +312,13 @@ function mezclarAmigos() {
   }
 }
 
-// Animación en CSS
+/* ------------------------
+   ESTILO DINÁMICO (animación ganador)
+   ------------------------ */
 const style = document.createElement("style");
 style.textContent = `
 @keyframes ganadorFlash {
-  0%, 100% { box-shadow: 0 0 10px #00ff88; }
-  50% { box-shadow: 0 0 30px #00ff88; }
+  0%, 100% { box-shadow: 0 0 10px #ffffffff; }
+  50% { box-shadow: 0 0 30px #ffffffff; }
 }`;
 document.head.appendChild(style);
-
