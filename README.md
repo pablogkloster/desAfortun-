@@ -1,63 +1,73 @@
-# 🎁 Amigo Secreto
+# 🎯 des-Afortunad@
 
-<img width="500" height="236" alt="Amigo Secreto 2" src="https://github.com/user-attachments/assets/c6f67e78-a983-403f-b504-6593ff71df30" />
-
-
-![Badge en Desarollo](https://img.shields.io/badge/STATUS-EN%20DESAROLLO-green)
+Una ruleta interactiva que elige al “menos afortunad@” del grupo 😅  
+Un proyecto simple y divertido creado con **HTML, CSS y JavaScript**, usando el lienzo **Canvas** para animar el giro, los efectos de luz y el logo central con brillo tipo neón 💡
 
 ---
 
-## 📚 Índice
+## 🌀 Demo
 
-- [📝 Descripción del proyecto](#-descripción-del-proyecto)
-- [⚙️ Funcionalidades](#️-funcionalidades)
-- [👥 Cómo pueden usarlo los usuarios](#-cómo-pueden-usarlo-los-usuarios)
-- [❓ Ayuda y soporte](#-ayuda-y-soporte)
-- [👨‍💻 Autores del proyecto](#-autores-del-proyecto)
+👉 https://vercel.com/pablo-kloster/des-afortunadx
 
 ---
 
-## 📝 Descripción del proyecto
+## ✨ Características
 
-**Amigo Secreto** es una aplicación web interactiva pensada para realizar sorteos aleatorios entre amigos, familiares o compañeros de trabajo. Permite ingresar nombres y seleccionar de forma aleatoria a un “amigo secreto” con tan solo unos clics. Es ideal para celebraciones, eventos o juegos sociales.
-
----
-
-## ⚙️ Funcionalidades
-
-- ✏️ **Agregar nombres**: los usuarios escriben un nombre en un campo de texto y lo agregan con el botón **"Añadir"**.
-- 🚫 **Validación de entrada**: si el campo está vacío, se muestra una alerta solicitando un nombre.
-- 📃 **Visualización de la lista**: todos los nombres ingresados se muestran en pantalla.
-- 🎲 **Sorteo aleatorio**: el botón **"Sortear Amigo"** elige un nombre aleatoriamente de la lista.
+- Ruleta totalmente animada con **Canvas**  
+- Efecto de **aceleración y frenado natural** al girar  
+- **Logo central con efecto neón parpadeante**  
+- **Botones interactivos**: cargar nombres, girar, y reiniciar  
+- Indicador visual del estado de los botones (verde = listo, rojo = girando)  
+- Mensaje dinámico con el nombre del ganador dentro de la barra de entrada  
+- Diseño responsive y adaptable  
 
 ---
 
-## 👥 Cómo pueden usarlo los usuarios
+## 🛠️ Tecnologías utilizadas
 
-1. Ingresar el nombre de un participante en el campo de texto, "Escribe un nombre".
-3. Hacer clic en **"Añadir"** para agregarlo a la lista.
-4. Repetir hasta tener a todos los participantes.
-   ![Demostración Agregar Participantes](assets/agregar-nombres.gif)
-5. Presionar **"Sortear Amigo"** para revelar al afortunado.
-6. Ver el resultado directamente en pantalla.
-  ![Demostración Sortear Participantes](assets/sortear-nombres.gif)
----
-
-## ❓ Ayuda y soporte
-
-Para dudas o sugerencias sobre el proyecto, puedes:
-
-- Revisar los comentarios en el código fuente.
-- Consultar futuras actualizaciones en esta misma página.
-- Contactar a los autores a través del repositorio (issues o pull requests).
+- **HTML5**  
+- **CSS3** (con animaciones y sombras)  
+- **JavaScript (ES6)**  
+- **Canvas API**  
 
 ---
 
-## 👨‍💻 Autores del proyecto
+## 🚀 Cómo usarlo
 
-- 🚀 Proyecto desarrollado como parte de un desafío de programación.
-- Autor: Pablo Kloster
+1. Abrí el proyecto en tu navegador (https://vercel.com/pablo-kloster/des-afortunadx).
+2. Escribí los nombres de los participantes y agregalos con el botón verde ✅.
+3. Pulsá el botón rojo 🔴 para hacer girar la ruleta.
+4. El ganador se mostrará en el campo de entrada.  
+5. Cuando quede un solo participante, el botón de reinicio 🔄 se activará.
 
 ---
 
+## 💡 Inspiración
+
+Este proyecto nació como una forma divertida de practicar lógica, animaciones y dibujo con Canvas.  
+El nombre “des-Afortunad@” juega con la idea de elegir al *menos afortunado* del grupo 😜  
+
+---
+
+## 🧠 Autor
+
+**Pablo Kloster**  
+📍 Proyecto personal de práctica y aprendizaje.  
+🔗 [LinkedIn] https://www.linkedin.com/in/pablo-kloster 
+🔗 [GitHub] https://github.com/pablogkloster/desAfortun-
+🔗 [Vercel] https://vercel.com/pablo-kloster/des-afortunadx
+
+---
+
+## 📸 Captura
+
+![Sorteo con ruleta](sortear-nombres.gif)
+
+---
+
+## 🏷️ Licencia
+
+Este proyecto se distribuye bajo la licencia **MIT**, libre para uso y modificación.
+
+---
 
