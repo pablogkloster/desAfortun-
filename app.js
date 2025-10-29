@@ -47,13 +47,13 @@ input.addEventListener("blur", () => {
   btnAgregar.classList.remove("encendido");
 });
 // También activamos la apariencia del botón verde según contenido
-input.addEventListener("input", () => {
+/*input.addEventListener("input", () => {
   if (input.value.trim() !== "") {
     btnAgregar.classList.add("encendido");
   } else {
     btnAgregar.classList.remove("encendido");
   }
-});
+});*/
 
 // Clicks
 btnAgregar.addEventListener("click", agregarAmigo);
@@ -168,7 +168,7 @@ function dibujarRuleta() {
 
   ctx.beginPath();
   ctx.arc(radio, radio, radioCirculo, 0, 2 * Math.PI);
-  ctx.fillStyle = "#1f1f1fff";
+  ctx.fillStyle = "#1a1a1a";
   ctx.fill();
   ctx.closePath();
 
@@ -202,10 +202,12 @@ function sortearAmigo() {
 
   mezclarAmigos();
 
-  // Bloqueo UI inmediato
+  // 🔒 Bloquear entrada mientras gira
   btnSortear.classList.remove("encendido");
   btnSortear.disabled = true;
   btnAgregar.classList.remove("encendido");
+  btnAgregar.disabled = true;
+  input.disabled = true;
 
   sonidoRuleta.currentTime = 0;
   sonidoRuleta.play();
@@ -245,25 +247,27 @@ function sortearAmigo() {
     mostrarResultados();
     amigos = amigos.filter(a => a !== ganador);
     mostrarAmigos();
-
-    // 🔹 Aquí la corrección: redibujar ruleta incluso si queda un solo participante
     dibujarRuleta();
 
     // Tras mostrar el ganador, decidir flujo
     setTimeout(() => {
-      // limpiar input/estilo
       input.value = "";
       input.style.animation = "";
       input.style.color = "#fff";
       input.style.textShadow = "0 0 6px white";
 
+      // 🔓 Reactivar entrada (pero sin encender visualmente el verde aún)
+      btnAgregar.disabled = false;
+      input.disabled = false;
+
+      // Decidir el flujo de botones
       if (amigos.length <= 1) {
-        // Si queda 0 o 1 participante: desactivar sorteo y enfocar reinicio
+        // 🔴 Si queda 1 o menos → sólo se habilita el botón de reinicio
         btnSortear.classList.remove("encendido");
         btnSortear.disabled = true;
         setTimeout(() => btnReiniciar.focus(), 300);
       } else {
-        // Si hay 2+ → reactivar sorteo y devolver foco al botón rojo
+        // 🔴 Reactivar solo el botón rojo (sin tocar el verde)
         setTimeout(() => {
           dibujarRuleta();
           btnSortear.classList.add("encendido");
@@ -272,13 +276,16 @@ function sortearAmigo() {
         }, 300);
       }
 
-      // Siempre dejar el input listo por si el usuario quiere agregar
+      // Dejar el input activo pero sin clase encendida en el verde
       input.focus();
+      btnAgregar.classList.remove("encendido");
+
     }, 3000);
   }
 
   requestAnimationFrame(animar);
 }
+
 
 
 /* ------------------------
@@ -322,3 +329,13 @@ style.textContent = `
   50% { box-shadow: 0 0 30px #ffffffff; }
 }`;
 document.head.appendChild(style);
+
+/* ------------------------
+   BUCLE GENERAL DE ANIMACIÓN
+   ------------------------ */
+function animarRuleta() {
+  dibujarRuleta();
+  requestAnimationFrame(animarRuleta);
+}
+animarRuleta(); // inicia el bucle continuo
+
