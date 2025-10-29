@@ -1,4 +1,3 @@
-// app.js (versión corregida y final)
 let amigos = [];
 let ganadores = [];
 let anguloInicial = 0;
@@ -191,7 +190,7 @@ function dibujarRuleta() {
 }
 
 /* ------------------------
-   SORTEO (bloque principal)
+   SORTEO (bloque principal con giro realista)
    ------------------------ */
 function sortearAmigo() {
   if (amigos.length < 2) {
@@ -212,25 +211,46 @@ function sortearAmigo() {
   sonidoRuleta.currentTime = 0;
   sonidoRuleta.play();
 
-  const giro = Math.random() * 2000 + 3000;
-  const duracion = 4000;
-  const inicio = performance.now();
+  // --- Variables de animación realista ---
+  let velocidad = 0; // velocidad angular
+  const aceleracion = 0.05; // cómo de rápido acelera
+  const desaceleracion = 0.97; // factor de frenado
+  const velocidadMaxima = 0.4; // máxima velocidad
+  let fase = "acelerando"; // fases: acelerando → constante → frenando
+  let animacion;
 
-  function animar(t) {
-    const progreso = Math.min((t - inicio) / duracion, 1);
-    const easing = 1 - Math.pow(1 - progreso, 3);
-    anguloInicial = (easing * giro * Math.PI) / 180;
-    dibujarRuleta();
-
-    if (progreso < 1) {
-      requestAnimationFrame(animar);
-      return;
+  function animar() {
+    if (fase === "acelerando") {
+      velocidad += aceleracion;
+      if (velocidad >= velocidadMaxima) {
+        velocidad = velocidadMaxima;
+        fase = "constante";
+        // mantener un momento en velocidad máxima
+        setTimeout(() => (fase = "frenando"), 1000 + Math.random() * 1000);
+      }
     }
 
-    // Fin de animación
-    sonidoRuleta.pause();
-    sonidoRuleta.currentTime = 0;
+    if (fase === "frenando") {
+      velocidad *= desaceleracion;
+      if (velocidad < 0.002) {
+        velocidad = 0;
+        cancelAnimationFrame(animacion);
+        sonidoRuleta.pause();
+        sonidoRuleta.currentTime = 0;
+        finalizarSorteo();
+        return;
+      }
+    }
 
+    anguloInicial += velocidad;
+    dibujarRuleta();
+    animacion = requestAnimationFrame(animar);
+  }
+
+  animacion = requestAnimationFrame(animar);
+
+  // --- Lógica post-giro ---
+  function finalizarSorteo() {
     const ganador = calcularGanador(anguloInicial);
 
     // Mostrar ganador en input con efecto
@@ -260,7 +280,6 @@ function sortearAmigo() {
       btnAgregar.disabled = false;
       input.disabled = false;
 
-      // Decidir el flujo de botones
       if (amigos.length <= 1) {
         // 🔴 Si queda 1 o menos → sólo se habilita el botón de reinicio
         btnSortear.classList.remove("encendido");
@@ -276,15 +295,12 @@ function sortearAmigo() {
         }, 300);
       }
 
-      // Dejar el input activo pero sin clase encendida en el verde
       input.focus();
       btnAgregar.classList.remove("encendido");
-
     }, 3000);
   }
-
-  requestAnimationFrame(animar);
 }
+
 
 
 
