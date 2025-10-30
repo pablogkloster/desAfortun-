@@ -37,22 +37,22 @@ input.addEventListener("keydown", (e) => {
   if (e.key === "Enter") agregarAmigo();
 });
 
-// Cuando el usuario hace clic en el input, activa visualmente el botón verde
+// --- Mantener el botón verde encendido mientras el input tiene foco ---
 input.addEventListener("focus", () => {
-  btnAgregar.classList.add("encendido");
+  if (!btnAgregar.disabled) {
+    btnAgregar.classList.add("encendido");
+  }
 });
-// Si pierde foco, quitar solo la apariencia (no la funcionalidad)
+
 input.addEventListener("blur", () => {
   btnAgregar.classList.remove("encendido");
 });
-// También activamos la apariencia del botón verde según contenido
-/*input.addEventListener("input", () => {
-  if (input.value.trim() !== "") {
-    btnAgregar.classList.add("encendido");
-  } else {
-    btnAgregar.classList.remove("encendido");
-  }
-});*/
+
+// --- Si se desactiva el botón (por el sorteo), apagarlo también ---
+const observer = new MutationObserver(() => {
+  if (btnAgregar.disabled) btnAgregar.classList.remove("encendido");
+});
+observer.observe(btnAgregar, { attributes: true, attributeFilter: ["disabled"] });
 
 // Clicks
 btnAgregar.addEventListener("click", agregarAmigo);
@@ -110,9 +110,10 @@ function agregarAmigo() {
     btnSortear.disabled = false;
   }
 
-  // Mantener el botón verde encendido breve
+  // Mantener encendido solo si el input sigue enfocado
+if (document.activeElement === input) {
   btnAgregar.classList.add("encendido");
-  setTimeout(() => btnAgregar.classList.remove("encendido"), 300);
+}
 
   input.value = "";
   input.focus();
@@ -268,6 +269,9 @@ function sortearAmigo() {
       btnAgregar.disabled = false;
       input.disabled = false;
 
+      // 👉 Evitar que el botón verde se ilumine por foco automático
+      input.blur();
+
       if (amigos.length <= 1) {
         btnSortear.classList.remove("encendido");
         btnSortear.disabled = true;
@@ -280,10 +284,8 @@ function sortearAmigo() {
           btnSortear.focus();
         }, 300);
       }
-
-      input.focus();
-      btnAgregar.classList.remove("encendido");
     }, 3000);
+
   }
 }
 
