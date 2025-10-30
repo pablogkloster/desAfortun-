@@ -172,19 +172,25 @@ function dibujarRuleta() {
   ctx.fill();
   ctx.closePath();
 
-  // === LOGO CON EFECTO NEÓN PARPADEANTE ===
+    // === LOGO CENTRAL ===
   if (logoImg.complete) {
     const x = canvas.width / 2 - logoSize / 2;
     const y = canvas.height / 2 - logoSize / 2;
-    const brillo = 0.6 + 0.4 * Math.sin(Date.now() / 800); // pulso suave
+
+    // 💡 Solo parpadea si aún no hay participantes
+    const estaVacia = amigos.length === 0;
+    const brillo = estaVacia
+      ? 0.6 + 0.4 * Math.sin(Date.now() / 800) // efecto pulso
+      : 1; // sin parpadeo (fijo)
 
     ctx.save();
     ctx.globalAlpha = brillo;
-    ctx.shadowColor = "#ffffff";
-    ctx.shadowBlur = 25 * brillo;
+    ctx.shadowColor = estaVacia ? "#ffffff" : "transparent";
+    ctx.shadowBlur = estaVacia ? 25 * brillo : 0;
     ctx.drawImage(logoImg, x, y, logoSize, logoSize);
     ctx.restore();
   }
+
 
   // 🔁 Mantener el efecto parpadeante del logo
   requestAnimationFrame(dibujarRuleta);
