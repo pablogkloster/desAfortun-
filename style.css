@@ -89,6 +89,17 @@ canvas {
   }
 }
 
+@keyframes pulsoNeon {
+  0%, 100% {
+    filter: brightness(1);
+    box-shadow: 0 0 0.5rem currentColor;
+  }
+  50% {
+    filter: brightness(1.8);
+    box-shadow: 0 0 2rem currentColor;
+  }
+}
+
 /* === Botones Arcade Unificados === */
 .botones-superiores {
   display: flex;
@@ -120,7 +131,7 @@ canvas {
 }
 .rojo.encendido {
   background: radial-gradient(circle at 30% 30%, var(--rojo-on), #400000);
-  animation: pulsoNeon 2s infinite ease-in-out;
+  animation: pulsoNeon 3.5s infinite cubic-bezier(0.4, 0, 0.6, 1);
 }
 .rojo:hover {
   animation: resplandorHover 1s infinite ease-in-out;
@@ -140,7 +151,7 @@ canvas {
 }
 .verde.encendido {
   background: radial-gradient(circle at 30% 30%, var(--verde-on), #003300);
-  animation: pulsoNeon 2s infinite ease-in-out;
+  animation: pulsoNeon 3.5s infinite cubic-bezier(0.4, 0, 0.6, 1);
 }
 .verde:hover {
   animation: resplandorHover 1s infinite ease-in-out;
@@ -162,7 +173,7 @@ canvas {
 }
 .negro.encendido {
   background: radial-gradient(circle at 30% 30%, #222, #000);
-  animation: pulsoNeon 2s infinite ease-in-out;
+  animation: pulsoNeon 3.5s infinite cubic-bezier(0.4, 0, 0.6, 1);
 }
 .negro:hover {
   animation: resplandorHover 1s infinite ease-in-out;
