@@ -190,7 +190,7 @@ function dibujarRuleta() {
 }
 
 /* ------------------------
-   SORTEO (bloque principal con giro realista)
+   SORTEO (optimizado para equipos lentos)
    ------------------------ */
 function sortearAmigo() {
   if (amigos.length < 2) {
@@ -211,49 +211,38 @@ function sortearAmigo() {
   sonidoRuleta.currentTime = 0;
   sonidoRuleta.play();
 
-  // --- Variables de animación realista ---
-  let velocidad = 0; // velocidad angular
-  const aceleracion = 0.05; // cómo de rápido acelera
-  const desaceleracion = 0.97; // factor de frenado
-  const velocidadMaxima = 0.4; // máxima velocidad
-  let fase = "acelerando"; // fases: acelerando → constante → frenando
-  let animacion;
+  // --- Variables del giro ---
+  const duracion = 3500; // duración total (ms)
+  const giroTotal = (Math.random() * 6 + 10) * Math.PI; // rango de 10 a 16 “medios giros”
+  const inicio = performance.now();
 
-  function animar() {
-    if (fase === "acelerando") {
-      velocidad += aceleracion;
-      if (velocidad >= velocidadMaxima) {
-        velocidad = velocidadMaxima;
-        fase = "constante";
-        // mantener un momento en velocidad máxima
-        setTimeout(() => (fase = "frenando"), 1000 + Math.random() * 1000);
-      }
-    }
+  function animar(t) {
+    const tiempo = t - inicio;
+    const progreso = Math.min(tiempo / duracion, 1);
 
-    if (fase === "frenando") {
-      velocidad *= desaceleracion;
-      if (velocidad < 0.002) {
-        velocidad = 0;
-        cancelAnimationFrame(animacion);
-        sonidoRuleta.pause();
-        sonidoRuleta.currentTime = 0;
-        finalizarSorteo();
-        return;
-      }
-    }
+    // Easing suave: acelera rápido y frena natural
+    const easing = 1 - Math.pow(1 - progreso, 3);
 
-    anguloInicial += velocidad;
+    // Actualizar ángulo basado en tiempo y easing (independiente de FPS)
+    anguloInicial = giroTotal * easing;
     dibujarRuleta();
-    animacion = requestAnimationFrame(animar);
+
+    if (progreso < 1) {
+      requestAnimationFrame(animar);
+    } else {
+      // Fin del giro
+      sonidoRuleta.pause();
+      sonidoRuleta.currentTime = 0;
+      finalizarSorteo();
+    }
   }
 
-  animacion = requestAnimationFrame(animar);
+  requestAnimationFrame(animar);
 
-  // --- Lógica post-giro ---
   function finalizarSorteo() {
     const ganador = calcularGanador(anguloInicial);
 
-    // Mostrar ganador en input con efecto
+    // Mostrar ganador con efecto visual
     input.value = `🥳 ${ganador}!`;
     input.style.animation = "ganadorFlash 1s ease-in-out 3";
     input.style.color = "#e5f73dff";
@@ -269,24 +258,21 @@ function sortearAmigo() {
     mostrarAmigos();
     dibujarRuleta();
 
-    // Tras mostrar el ganador, decidir flujo
+    // Reinicio visual
     setTimeout(() => {
       input.value = "";
       input.style.animation = "";
       input.style.color = "#fff";
       input.style.textShadow = "0 0 6px white";
 
-      // 🔓 Reactivar entrada (pero sin encender visualmente el verde aún)
       btnAgregar.disabled = false;
       input.disabled = false;
 
       if (amigos.length <= 1) {
-        // 🔴 Si queda 1 o menos → sólo se habilita el botón de reinicio
         btnSortear.classList.remove("encendido");
         btnSortear.disabled = true;
         setTimeout(() => btnReiniciar.focus(), 300);
       } else {
-        // 🔴 Reactivar solo el botón rojo (sin tocar el verde)
         setTimeout(() => {
           dibujarRuleta();
           btnSortear.classList.add("encendido");
@@ -300,8 +286,6 @@ function sortearAmigo() {
     }, 3000);
   }
 }
-
-
 
 
 /* ------------------------
